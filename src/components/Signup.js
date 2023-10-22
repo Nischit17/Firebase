@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { checkValidData } from '../utils/validate'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '../utils/firebase'
@@ -7,6 +7,8 @@ import { auth } from '../utils/firebase'
 
 
 const Signup = () => {
+
+  const navigate = useNavigate()
 
   const [errorMessage,setErrorMessage] = useState(null)
 
@@ -23,7 +25,7 @@ const Signup = () => {
     createUserWithEmailAndPassword(auth, email.current.value, password.current.value)
   .then((userCredential) => {
     const user = userCredential.user;
-    console.log(user);
+    navigate('/dashboard')
   })
   .catch((error) => {
     const errorCode = error.code;

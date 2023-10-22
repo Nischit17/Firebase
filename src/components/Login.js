@@ -1,8 +1,12 @@
 import React, { useRef, useState } from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { checkValidData } from '../utils/validate';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../utils/firebase';
 
 const Login = () => {
+
+  const navigate = useNavigate()
 
   const [errorMessage, setErrorMessage] = useState(null)
 
@@ -13,9 +17,20 @@ const Login = () => {
 
     const message = checkValidData(email.current.value, password.current.value)
     setErrorMessage(message);
-    if(!message) return;
+    if(message) return;
 
     // Sign In 
+    signInWithEmailAndPassword(auth, email.current.value, password.current.value)
+  .then((userCredential) => {
+    const user = userCredential.user;
+    navigate('/dashboard')
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    setErrorMessage(errorCode +"-"+ errorMessage)
+    alert("Incorrect credentials")
+  });
   }
   
   return (
@@ -56,7 +71,7 @@ const Login = () => {
           <p className='text-red-400 py-2'>{errorMessage}</p>
           
           <div className="flex items-center justify-between">
-            <button onClick={handleButtonClick}
+            <button onClick={handleButtonClick} 
               className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="submit"
             >
